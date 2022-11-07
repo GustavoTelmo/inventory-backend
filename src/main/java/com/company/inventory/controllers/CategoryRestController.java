@@ -1,5 +1,4 @@
 package com.company.inventory.controllers;
-
 import com.company.inventory.models.Category;
 import com.company.inventory.response.CategoryResponseRest;
 import com.company.inventory.services.CategoryServiceImpl;
@@ -36,6 +35,12 @@ public class CategoryRestController {
     public ResponseEntity<CategoryResponseRest> update(@RequestBody Category category,@PathVariable Long id){
 
         ResponseEntity<CategoryResponseRest> response = categoryService.uptade(category,id);
+        return response;
+    }
+    @DeleteMapping ("/categories/{id}")
+    public ResponseEntity<CategoryResponseRest> update(@PathVariable Long id){
+
+        ResponseEntity<CategoryResponseRest> response = categoryService.deleteById(id);
         return response;
     }
 }
