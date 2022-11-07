@@ -1,8 +1,7 @@
 package com.company.inventory.models;
 import lombok.Data;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -11,6 +10,7 @@ import java.io.Serializable;
 public class Category implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;

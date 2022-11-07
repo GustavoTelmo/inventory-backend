@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,4 +62,62 @@ public class CategoryServiceImpl implements ICategoryService {
         }
            return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoryResponseRest> save(Category category) {
+        CategoryResponseRest response = new CategoryResponseRest();
+        List<Category>list= new ArrayList<>();
+
+        try {
+            Category categorySave = iCategoryDao.save(category);
+            if (categorySave != null){
+                list.add(categorySave);
+                response.getCategoryResponse().setCategory(list);
+                response.setMetadata("respuesta ok","00","categoria guardada");
+            }else {
+                response.setMetadata("respuesta nok","-1","categoria no guardada");
+                return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+            response.setMetadata("respuesta nok","-1","error al guardar categoria");
+            e.getStackTrace();
+            return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+           return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoryResponseRest> uptade(Category category, Long id) {
+        CategoryResponseRest response = new CategoryResponseRest();
+        List<Category>list= new ArrayList<>();
+
+        try {
+            Optional<Category> categorySearch = iCategoryDao.findById(id);
+            if (categorySearch.isPresent()){
+                categorySearch.get().setName(category.getName());
+                categorySearch.get().setDescription(category.getDescription());
+                Category categoryUpdate = iCategoryDao.save(categorySearch.get());
+                if(categoryUpdate != null){
+                    list.add(categoryUpdate);
+                    response.getCategoryResponse().setCategory(list);
+                    response.setMetadata("respuesta ok","00","categoria actualizada");
+                }else {
+                    response.setMetadata("respuesta nok","-1","categoria no actualizada");
+                    return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.BAD_REQUEST);
+                }
+            }else {
+                response.setMetadata("respuesta nok","-1","categoria no actualizada");
+                return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            response.setMetadata("respuesta nok","-1","error al actualizar categoria");
+            e.getStackTrace();
+            return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+            return new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
+    }
+
 }
